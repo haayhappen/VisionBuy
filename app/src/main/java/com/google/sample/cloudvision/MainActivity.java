@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mImageDetails;
     private ImageView mMainImage;
-    SignedRequestsHelper helper;
-    UrlParameterHandler parameterHandler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,16 +104,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-
-                                try {
                                     startCamera();
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                } catch (NoSuchAlgorithmException e) {
-                                    e.printStackTrace();
-                                } catch (InvalidKeyException e) {
-                                    e.printStackTrace();
-                                }
+
 
                             }
                         });
@@ -140,14 +131,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 //throws only for testing AMAZON API
-    public void startCamera() throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
-
-        String requestUrl = null;
-        parameterHandler = UrlParameterHandler.getInstance();
-        helper = new SignedRequestsHelper();
-
-        requestUrl = helper.sign(parameterHandler.buildMapForItemSearch());
-        System.out.println("Signed URL:"+requestUrl);
+    public void startCamera() {
 
         if (PermissionUtils.requestPermission(
                 this,
@@ -186,15 +170,9 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case CAMERA_PERMISSIONS_REQUEST:
                 if (PermissionUtils.permissionGranted(requestCode, CAMERA_PERMISSIONS_REQUEST, grantResults)) {
-                    try {
+
                         startCamera();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    } catch (InvalidKeyException e) {
-                        e.printStackTrace();
-                    }
+
                 }
                 break;
             case GALLERY_PERMISSIONS_REQUEST:
@@ -317,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
 
             protected void onPostExecute(String result) {
                 mImageDetails.setText(result);
+
             }
         }.execute();
     }
@@ -343,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String convertResponseToString(BatchAnnotateImagesResponse response) {
         String message = "I found these things:\n\n";
+        List<String> keywords = new ArrayList<String>();
 
 ///////////////////////////////////////////////////////////////////////////////////////
         /**
@@ -405,6 +385,7 @@ public class MainActivity extends AppCompatActivity {
             for (WebEntity entity : webEntities) {
                 message += String.format(Locale.US, "%.3f: %s", entity.getScore(), entity.getDescription());
                 message += "\n";
+                keywords.add(entity.getDescription());
             }
             message += "\n\n\n";
         } else {
@@ -422,6 +403,15 @@ public class MainActivity extends AppCompatActivity {
             message += "nothing";
         }
 */
-        return message;
+
+        if(keywords.size() >5){
+            keywords.subList(5,keywords.size()).clear();
+        }
+
+        Intent intent = new Intent(this, MasterActivity.class);
+        intent.putStringArrayListExtra("keys", (ArrayList<String>) keywords);
+        startActivity(intent);
+
+        return /*message + */keywords.toString();
     }
 }

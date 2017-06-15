@@ -1,7 +1,10 @@
 package com.google.sample.cloudvision;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static android.R.id.list;
 
 public class UrlParameterHandler {
 
@@ -21,15 +24,37 @@ public class UrlParameterHandler {
         Map<String, String> myparams = new HashMap<String, String>();
         myparams.put("Service", "AWSECommerceService");
         myparams.put("Operation", "ItemSearch");
-        myparams.put("Version", "2009-10-01");
+        //myparams.put("Version", "2009-10-01");
         myparams.put("ContentType", "text/xml");
-        //myparams.put("SearchIndex", "MobileApps");//for searching mobile apps
+        myparams.put("SearchIndex", "ALL");//for searching mobile apps
         myparams.put("Keywords", "iphone");
-        myparams.put("AssociateTag", "visi05-21");
-        myparams.put("MaximumPrice","1000");
-        myparams.put("Sort","price");
-        myparams.put("ResponseGroup", "Images,Small");
+        myparams.put("AssociateTag", "visionbuy-20");
+        //myparams.put("MaximumPrice","1000");
+        //myparams.put("Sort","price");
+        myparams.put("ResponseGroup", "Images,ItemAttributes,Offers");
         return myparams;
     }
 
+
+    public  Map<String,String> buildMapForItemSearch(List<String> keywordList){
+        StringBuilder sb = new StringBuilder();
+        for (String s : keywordList)
+        {
+            sb.append(s);
+            sb.append("\t");
+        }
+
+        Map<String, String> myparams = new HashMap<String, String>();
+        myparams.put("Service", "AWSECommerceService");
+        myparams.put("Operation", "ItemSearch");
+        //myparams.put("Version", "2009-10-01");
+        myparams.put("ContentType", "text/xml");
+        myparams.put("SearchIndex", "All");//for searching mobile apps
+        myparams.put("Keywords", sb.toString());
+        myparams.put("AssociateTag", "visionbuy-20");
+        //myparams.put("MaximumPrice","1000");
+        //myparams.put("Sort","price");
+        myparams.put("ResponseGroup", "Images,ItemAttributes,Offers");
+        return myparams;
+    }
 }

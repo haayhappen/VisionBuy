@@ -1,6 +1,10 @@
 package com.google.sample.cloudvision;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.loopj.android.http.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -10,15 +14,22 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import cz.msebera.android.httpclient.Header;
+
+import static java.lang.System.out;
+
 
 public class Parser {
     /** ---------------------  Search TAG --------------------- */
@@ -35,9 +46,15 @@ public class Parser {
 
     private static final String VALUE_VALID_RESPONCE="True";
 
+    Context mainContext;
+    String responseXML = "test";
+
     //Tags
     //Items,Request,IsValid,Item,ASIN,DetailPageURL,MediumImage,URL,ItemAttributes,Title
 
+    public void setContext(Context c){
+        this.mainContext = c;
+    }
 
     public NodeList getResponceNodeList(String service_url) {
         String searchResponce = this.getUrlContents(service_url);
@@ -83,22 +100,72 @@ public class Parser {
 
     /** In app reused functions */
 
-    private String getUrlContents(String theUrl) {
+    public String getUrlContents(String theUrl) {
         StringBuilder content = new StringBuilder();
-        try {
-            URL url = new URL(theUrl);
-            URLConnection urlConnection = url.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(urlConnection.getInputStream()), 8);
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                content.append(line + "");
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(mainContext)
+                .title("Dialog")
+                .content("Please wait while fetching data")
+                .progress(true, 0);
+
+        MaterialDialog dialog = builder.build();
+        dialog.show();
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(theUrl, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onStart() {
+                // called before request is started
             }
-            bufferedReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return content.toString();
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                responseXML += statusCode;
+                responseXML += responseBody;
+                try {
+                    String responsebody = new String(responseBody, "UTF-8");
+                    Log.d("OnSuccess","StatusCode: "+statusCode+" ResponseBody: "+ responsebody);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                responseXML += statusCode;
+                responseXML += responseBody;
+
+                try {
+                     String responsebody = new String(responseBody, "UTF-8");
+                    Log.d("OnFailure","StatusCode: "+statusCode+" ResponseBody: "+ responsebody);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        });
+
+//        try {
+//            URL url = new URL(theUrl);
+//            URLConnection urlConnection = url.openConnection();
+//            BufferedReader bufferedReader = new BufferedReader(
+//                    new InputStreamReader(urlConnection.getInputStream()), 8);
+//            String line;
+//            while ((line = bufferedReader.readLine()) != null) {
+//                content.append(line + "");
+//            }
+//            bufferedReader.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        dialog.dismiss();
+//        return content.toString();
+        return responseXML;
     }
 
     public Document getDomElement(String xml) {
