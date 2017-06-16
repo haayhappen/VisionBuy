@@ -47,7 +47,8 @@ public class Parser {
     private static final String VALUE_VALID_RESPONCE="True";
 
     Context mainContext;
-    String responseXML = "test";
+    String responseXML = null;
+    final StringBuilder strBuilder = new StringBuilder();
 
     //Tags
     //Items,Request,IsValid,Item,ASIN,DetailPageURL,MediumImage,URL,ItemAttributes,Title
@@ -120,28 +121,34 @@ public class Parser {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                responseXML += statusCode;
-                responseXML += responseBody;
+
+                String body = null;
                 try {
-                    String responsebody = new String(responseBody, "UTF-8");
-                    Log.d("OnSuccess","StatusCode: "+statusCode+" ResponseBody: "+ responsebody);
+                    body = new String(responseBody, "UTF-8");
+                    Log.d("OnSuccess","StatusCode: "+statusCode+" ResponseBody: "+ body);
+                    strBuilder.append(body);
+
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+
+                //Parser.this.responseXML = body;
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                responseXML += statusCode;
-                responseXML += responseBody;
 
+                String body = null;
                 try {
-                     String responsebody = new String(responseBody, "UTF-8");
-                    Log.d("OnFailure","StatusCode: "+statusCode+" ResponseBody: "+ responsebody);
+                    body = new String(responseBody, "UTF-8");
+                    Log.d("OnFailure","StatusCode: "+statusCode+" ResponseBody: "+ body);
+                    strBuilder.append(body);
+
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
 
+                //Parser.this.responseXML = body;
             }
 
             @Override
@@ -165,7 +172,7 @@ public class Parser {
 //        }
         dialog.dismiss();
 //        return content.toString();
-        return responseXML;
+        return strBuilder.toString();
     }
 
     public Document getDomElement(String xml) {

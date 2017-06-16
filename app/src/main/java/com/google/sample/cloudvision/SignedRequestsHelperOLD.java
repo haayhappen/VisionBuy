@@ -77,6 +77,7 @@ public class SignedRequestsHelperOLD {
             data = stringToSign.getBytes(UTF8_CHARSET);
             rawHmac = mac.doFinal(data);
             //Base64 encoder = new Base64();
+
             //TODO CHECK IF WORKS
             signature = new String(Base64.encode(rawHmac,Base64.DEFAULT));
         } catch (UnsupportedEncodingException e) {

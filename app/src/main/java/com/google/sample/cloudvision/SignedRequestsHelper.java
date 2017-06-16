@@ -42,8 +42,8 @@ import java.util.TreeMap;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
+import android.util.Base64;
+//import org.apache.commons.codec.binary.Base64;
 
 /**
  * This class contains all the logic for signing requests
@@ -142,13 +142,16 @@ public class SignedRequestsHelper {
             + REQUEST_URI + "\n"
             + canonicalQS;
 
+        System.out.println("tosign: "+ toSign);
         // get the signature
         String hmac = this.hmac(toSign);
-        String sig = this.percentEncodeRfc3986(hmac);
 
+        System.out.println("hmac: "+ hmac);
+        String sig = this.percentEncodeRfc3986(hmac);
+        System.out.println("sig: "+sig);
         // construct the URL
         String url = 
-            "http://" + this.endpoint + REQUEST_URI + "?" + canonicalQS + "&Signature=" + sig;
+            "http://" + this.endpoint + REQUEST_URI + "?" + canonicalQS + "&Signature=" + sig/*.replaceAll("%0D%0A", "")*/;
 
         return url;
     }
@@ -180,8 +183,8 @@ public class SignedRequestsHelper {
         try {
             data = stringToSign.getBytes(UTF8_CHARSET);
             rawHmac = mac.doFinal(data);
-            Base64 encoder = new Base64();
-            signature = new String(encoder.encode(rawHmac));
+            //Base64 encoder = new Base64(0);
+            signature = new String(Base64.encode(rawHmac,Base64.NO_WRAP));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(UTF8_CHARSET + " is unsupported!", e);
         }
