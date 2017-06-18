@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.name;
 import static android.R.attr.tag;
 
 /**
@@ -21,10 +22,10 @@ import static android.R.attr.tag;
 public class AmazonParser {
 
     public static class Item {
-        public final String title;
-        public final String brand;
-        public final String foramattedPrice;
-        public final String imageURL;
+        public String title;
+        public String brand;
+        public String foramattedPrice;
+        public String imageURL;
 
         private Item(String title, String brand, String foramattedPrice, String imageURL) {
             this.title = title;
@@ -53,13 +54,28 @@ public class AmazonParser {
 
         parser.require(XmlPullParser.START_TAG, ns, "ItemSearchResponse");
         while (parser.next() != XmlPullParser.END_TAG) {
+
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
+
             String name = parser.getName();
-            // Starts by looking for the entry tag
-            if (name.equals("Item")) {
-                items.add(readEntry(parser));
+            if (name.equals("Items")) {
+                parser.require(XmlPullParser.START_TAG, ns, "Items");
+//            Log.i("Parser","Parser.getName ="+parser.getName());
+                while (parser.next() != XmlPullParser.END_TAG) {
+
+                    if (parser.getEventType() != XmlPullParser.START_TAG) {
+                        continue;
+                    }
+                    String namee = parser.getName();
+                    if (namee.equals("Item")) {
+                        Log.i("Parser", "New Item found! --> Adding to items list");
+                        items.add(readEntry(parser));
+                    } else {
+                        skip(parser);
+                    }
+                }
             } else {
                 skip(parser);
             }
@@ -71,28 +87,88 @@ public class AmazonParser {
     // Parses the contents of an entry. If it encounters a title, summary, or link tag, hands them off
 // to their respective "read" methods for processing. Otherwise, skips the tag.
     private Item readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
+        Log.i("Parser", "ReadEntry Method: " + parser.getText() + parser.getName());
         parser.require(XmlPullParser.START_TAG, ns, "Item");
         String title = null;
         String brand = null;
         String formattedPrice = null;
         String imageURL = null;
         while (parser.next() != XmlPullParser.END_TAG) {
-            Log.i("Parser",parser.getText());
+            Log.i("Parser", parser.getName());
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("Title")) {
-                title = readTitle(parser);
-            } else if (name.equals("SmallImage")) {
+            if (name.equals("SmallImage")) {
                 imageURL = readImageUrl(parser);
-            } else if (name.equals("Brand")) {
-                brand = readBrand(parser);
-            } else if (name.equals("FormattedPrice")) {
-                formattedPrice = readPrice(parser);
-            } else {
+            } else if (name.equals("ItemAttributes")) {
+                //dig into -->
+                parser.require(XmlPullParser.START_TAG, ns, "ItemAttributes");
+                while (parser.next() != XmlPullParser.END_TAG) {
+                    if (parser.getEventType() != XmlPullParser.START_TAG) {
+                        continue;
+                    }
+                    String namee = parser.getName();
+                    if (namee.equals("Title")) {
+                        title = readTitle(parser);
+                    } else if (namee.equals("Brand")) {
+                        brand = readBrand(parser);
+//                    } else if (namee.equals("ListPrice")) {
+//                        parser.require(XmlPullParser.START_TAG, ns, "ListPrice");
+//                        while (parser.next() != XmlPullParser.END_TAG) {
+//                            if (parser.getEventType() != XmlPullParser.START_TAG) {
+//                                continue;
+//                            }
+//                            String nameee = parser.getName();
+//                            if (nameee.equals("FormattedPrice")) {
+//                                formattedPrice = readPrice(parser);
+//                            } else {
+//                                skip(parser);
+//                            }
+//                        }
+                    } else {
+                        skip(parser);
+                    }
+                }
+            }else if (name.equals("OfferSummary")) {
+                while (parser.next() != XmlPullParser.END_TAG) {
+
+                    if (parser.getEventType() != XmlPullParser.START_TAG) {
+                        continue;
+                    }
+                    String namex = parser.getName();
+                    if (namex.equals("LowestNewPrice")) {
+                        while (parser.next() != XmlPullParser.END_TAG) {
+                            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                                continue;
+                            }
+                            String namew = parser.getName();
+
+                            if (namew.equals("FormattedPrice")) {
+                                formattedPrice = readPrice(parser);
+                            }else skip(parser);
+                        }
+
+                    } else {
+                        skip(parser);
+                    }
+                }
+            }
+            else {
                 skip(parser);
             }
+
+//            if (name.equals("Title")) {
+//                title = readTitle(parser);
+//            } else if (name.equals("SmallImage")) {
+//                imageURL = readImageUrl(parser);
+//            } else if (name.equals("Brand")) {
+//                brand = readBrand(parser);
+//            } else if (name.equals("FormattedPrice")) {
+//                formattedPrice = readPrice(parser);
+//            } else {
+//                skip(parser);
+//            }
         }
         return new Item(title, brand, formattedPrice, imageURL);
     }
@@ -125,8 +201,6 @@ public class AmazonParser {
         return url;
 
 
-
-
 //        parser.nextTag();
 //        parser.require(XmlPullParser.START_TAG,ns,"URL");
 //        url = readText(parser);
@@ -142,6 +216,7 @@ public class AmazonParser {
         parser.require(XmlPullParser.END_TAG, ns, "URL");
         return url;
     }
+
     // Processes brand tags in the feed.
     private String readBrand(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "Brand");
