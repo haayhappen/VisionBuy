@@ -57,15 +57,15 @@ public class Parser {
         this.mainContext = c;
     }
 
-    public NodeList getResponceNodeList(String service_url) {
-        String searchResponce = this.getUrlContents(service_url);
+    public NodeList getResponseNodeList(String service_url) {
+        String searchResponse = this.getUrlContents(service_url);
         Log.i("url",""+service_url);
-        Log.i("responce",""+searchResponce);
+        Log.i("response",""+searchResponse);
         Document doc;
         NodeList items = null;
-        if (searchResponce != null) {
+        if (searchResponse != null) {
             try {
-                doc = this.getDomElement(searchResponce);
+                doc = this.getDomElement(searchResponse);
                 items = doc.getElementsByTagName(KEY_ROOT);
                 Element element=(Element)items.item(0);
                 if(isResponceValid(element)){

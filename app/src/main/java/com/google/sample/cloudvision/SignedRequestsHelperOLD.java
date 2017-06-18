@@ -1,5 +1,5 @@
 package com.google.sample.cloudvision;
-
+/*
 import android.util.Base64;
 import android.util.Log;
 
@@ -29,8 +29,8 @@ public class SignedRequestsHelperOLD {
     private String endpoint = "webservices.amazon.de"; // must be lowercase
 
     // change this so reads from properties file
-    private String awsAccessKeyId = /*"AKIAJAE264LT5OEA54SA"; // */"AKIAJP6NVAMRR3NSMUAA";
-    private String awsSecretKey =/* "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"; //*/ "OFWJUf/bEYATQ6ZeMpAoPIn34cduAE0gyAqj9TUk";
+    private String awsAccessKeyId = /*"AKIAJAE264LT5OEA54SA"; // "AKIAJP6NVAMRR3NSMUAA";
+    private String awsSecretKey =/* "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"; // "OFWJUf/bEYATQ6ZeMpAoPIn34cduAE0gyAqj9TUk";
 
     private SecretKeySpec secretKeySpec = null;
     private Mac mac = null;
@@ -131,3 +131,4 @@ public class SignedRequestsHelperOLD {
         return out;
     }
 }
+*/

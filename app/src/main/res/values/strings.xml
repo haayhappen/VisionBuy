@@ -10,4 +10,6 @@
     <string name="dialog_select_gallery">Gallery</string>
 
     <string name="image_picker_error">Something is wrong with that image. Pick a different one please.</string>
+    <string name="connection_error">Connection failed</string>
+    <string name="xml_error">XML Error</string>
 </resources>
