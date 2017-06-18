@@ -15,7 +15,7 @@
         android:layout_marginRight="5dip">
 
         <ImageView
-            android:id="@+id/list_image"
+            android:id="@+id/list_imageview"
             android:layout_width="50dip"
             android:layout_height="50dip" />
 
@@ -23,7 +23,7 @@
 
     <!-- Title Of Song-->
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/titletextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
@@ -36,10 +36,10 @@
 
     <!-- Artist Name -->
     <TextView
-        android:id="@+id/description"
+        android:id="@+id/brandtextview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title"
+        android:layout_below="@id/titletextview"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
         android:text="64 GB Smartphone Qualcom 8 new"
@@ -48,10 +48,10 @@
 
     <!-- Rightend Duration -->
     <TextView
-        android:id="@+id/price"
+        android:id="@+id/pricetextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/description"
+        android:layout_below="@+id/brandtextview"
         android:layout_marginRight="5dip"
         android:layout_toEndOf="@+id/thumbnail"
         android:gravity="right"

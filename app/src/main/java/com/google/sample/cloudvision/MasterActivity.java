@@ -210,6 +210,7 @@ public class MasterActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             setContentView(R.layout.content_xml);
+            ListView lv = (ListView) findViewById(R.id.listview);
 
             InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
 
@@ -222,6 +223,11 @@ public class MasterActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            CustomArrayAdapter caa = new CustomArrayAdapter(MasterActivity.this,items);
+            lv.setAdapter(caa);
+
+            //TODO POPULATE LISTVIEW
             String itemstring = "";
 
             for (AmazonParser.Item item : items) {
