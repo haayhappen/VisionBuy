@@ -1,61 +1,29 @@
 package com.google.sample.cloudvision;
 
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import static android.R.attr.entries;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static com.google.sample.cloudvision.R.id.xmlview;
 
 public class MasterActivity extends AppCompatActivity {
 
@@ -64,7 +32,7 @@ public class MasterActivity extends AppCompatActivity {
     private static final String AWS_SECRET_KEY = "QuRbYHla0ohsRUMzYI88UAYB+g4IrwYdjwReoxQ0";
 
     private static final String ENDPOINT = "webservices.amazon.de";
-    ListView xmlView;
+    ListView listview;
     String xml;
 
     //parent
@@ -89,30 +57,38 @@ public class MasterActivity extends AppCompatActivity {
 
     ArrayList<HashMap<String, String>> products = new ArrayList<HashMap<String, String>>();
 
-    TextView tw;
-    Parser parser;
-    String requestUrl = null;
+    public TextView tw;
+    public Parser parser;
+    public String requestUrl = null;
+    public SignedRequestsHelper helper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
-        xmlView = (ListView) findViewById(R.id.list);
 
+        listview = (ListView) findViewById(R.id.listview);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //TODO HANDLE ITEMCKLCIK
+                Toast.makeText(MasterActivity.this,"Item clicked, onItemClickListener in MasterActivity",Toast.LENGTH_LONG);
+            }
+        });
+
+        //gets the keywords from the MainActivity intent
         ArrayList<String> keywords = getIntent().getStringArrayListExtra("keys");
 
-        //tw = (TextView) findViewById(R.id.textView);
-
-        SignedRequestsHelper helper;
-
         try {
+            //get the SignedRequestHelper instance with Endpoint and specified credentials
             helper = SignedRequestsHelper.getInstance(ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY);
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
-
-
+        //build a keyword search string
         if (keywords != null) {
             StringBuilder sb = new StringBuilder();
             for (String s : keywords) {
@@ -120,6 +96,7 @@ public class MasterActivity extends AppCompatActivity {
                 sb.append("\t");
             }
         }
+        //build Hashmap for QueryParams
         Map<String, String> params = new HashMap<String, String>();
 
         params.put("Service", "AWSECommerceService");
@@ -128,11 +105,14 @@ public class MasterActivity extends AppCompatActivity {
         params.put("AssociateTag", "visi05-21");
         params.put("SearchIndex", "All");
         params.put("ContentType", "text/xml");
+        //TODO REMOVE HARDCODED KEYWORDs
         params.put("Keywords", "iphone");
         params.put("ResponseGroup", "Images,ItemAttributes,Offers");
 
+        //sign the url with params
         requestUrl = helper.sign(params);
 
+        //TODO REMOVE FOR PRODUCTION
         System.out.println("RequestUrl: " + requestUrl);
     }
 
@@ -145,7 +125,7 @@ public class MasterActivity extends AppCompatActivity {
         new DownloadXmlTask().execute(url);
     }
 
-    // Implementation of AsyncTask used to download XML feed from stackoverflow.com.
+    // Implementation of AsyncTask used to download XML products from amazon
     private class DownloadXmlTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {

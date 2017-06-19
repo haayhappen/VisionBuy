@@ -11,9 +11,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.name;
-import static android.R.attr.tag;
-
 /**
  * Created by Fynn on 17.06.2017.
  */
@@ -33,6 +30,8 @@ public class AmazonParser {
             this.foramattedPrice = foramattedPrice;
             this.imageURL = imageURL;
         }
+
+
     }
 
     private static final String ns = null;
