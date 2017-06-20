@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * Created by Fynn on 17.06.2017.
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class AmazonParser {
 
-    public static class Item {
+    public static class Item implements Serializable{
         public String title;
         public String brand;
         public String foramattedPrice;

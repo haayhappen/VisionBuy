@@ -69,12 +69,12 @@ public class MasterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_master);
 
         listview = (ListView) findViewById(R.id.listview);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //TODO HANDLE ITEMCKLCIK
-                Toast.makeText(MasterActivity.this,"Item clicked, onItemClickListener in MasterActivity",Toast.LENGTH_LONG);
+                Toast.makeText(MasterActivity.this, "Item clicked, onItemClickListener in MasterActivity", Toast.LENGTH_LONG);
             }
         });
 
@@ -204,36 +204,36 @@ public class MasterActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            CustomArrayAdapter caa = new CustomArrayAdapter(MasterActivity.this,items);
+            CustomArrayAdapter caa = new CustomArrayAdapter(MasterActivity.this, items);
             lv.setAdapter(caa);
 
             //TODO POPULATE LISTVIEW
             String itemstring = "";
 
             for (AmazonParser.Item item : items) {
-                if (item.title == null){
+                if (item.title == null) {
                     item.title = "No title available\n";
                     itemstring += item.title;
-                } else itemstring += item.title+"\n";
-                if (item.brand == null){
+                } else itemstring += item.title + "\n";
+                if (item.brand == null) {
                     item.brand = "No brand available\n";
                     itemstring += item.brand;
-                } else itemstring += item.brand+"\n";
-                if (item.foramattedPrice == null){
+                } else itemstring += item.brand + "\n";
+                if (item.foramattedPrice == null) {
                     item.foramattedPrice = "No price available\n";
                     itemstring += item.foramattedPrice;
-                }else itemstring += item.foramattedPrice+"\n";
-                if (item.imageURL == null){
+                } else itemstring += item.foramattedPrice + "\n";
+                if (item.imageURL == null) {
                     item.imageURL = "No Image Url available\n";
                     itemstring += item.imageURL;
-                }else itemstring += item.imageURL+"\n";
+                } else itemstring += item.imageURL + "\n";
 
                 itemstring += "\n\n";
             }
             Toast.makeText(MasterActivity.this, "Items successfully parsed!", Toast.LENGTH_SHORT).show();
             TextView xmlview;
             xmlview = (TextView) findViewById(R.id.xmlview);
-             xmlview.setText(itemstring);
+            xmlview.setText(itemstring);
 
 //            // Displays the HTML string in the UI via a WebView
 //            WebView myWebView = (WebView) findViewById(R.id.webview);
@@ -268,153 +268,6 @@ public class MasterActivity extends AppCompatActivity {
             return result;
         }
     }
-
-//    private AmazonParser.Item loadXmlFromNetwork(String urlString) throws XmlPullParserException, IOException {
-//        InputStream stream = null;
-//        // Instantiate the parser
-//        AmazonParser amazonParser = new AmazonParser();
-//        List<AmazonParser.Item> items = null;
-//        String title = null;
-//        String url = null;
-//        String summary = null;
-////        Calendar rightNow = Calendar.getInstance();
-////        DateFormat formatter = new SimpleDateFormat("MMM dd h:mmaa");
-//
-//        // Checks whether the user set the preference to include summary text
-////        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-////        boolean pref = sharedPrefs.getBoolean("summaryPref", false);
-//
-////        StringBuilder htmlString = new StringBuilder();
-////        htmlString.append("<h3>" + getResources().getString(R.string.page_title) + "</h3>");
-////        htmlString.append("<em>" + getResources().getString(R.string.updated) + " " +
-////                formatter.format(rightNow.getTime()) + "</em>");
-//
-//        try {
-//            stream = downloadUrl(urlString);
-//            items = amazonParser.parse(stream);
-//            // Makes sure that the InputStream is closed after the app is
-//            // finished using it.
-//        } finally {
-//            if (stream != null) {
-//                stream.close();
-//            }
-//        }
-//
-//        // StackOverflowXmlParser returns a List (called "entries") of Entry objects.
-//        // Each Entry object represents a single post in the XML feed.
-//        // This section processes the entries list to combine each entry with HTML markup.
-//        // Each entry is displayed in the UI as a link that optionally includes
-//        // a text summary.
-//        for (AmazonParser.Item item : items) {
-//            //TODO FILL LISTVIEW WITH ITEMS
-//        }
-//        return items;
-//    }
-
-    // Given a string representation of a URL, sets up a connection and gets
-// an input stream.
-//    private InputStream downloadUrl(String urlString) throws IOException {
-//        URL url = new URL(urlString);
-//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//        conn.setReadTimeout(10000 /* milliseconds */);
-//        conn.setConnectTimeout(15000 /* milliseconds */);
-//        conn.setRequestMethod("GET");
-//        conn.setDoInput(true);
-//        // Starts the query
-//        conn.connect();
-//        return conn.getInputStream();
-//    }
 }
-
-
-//        parser = new Parser();
-//        parser.setContext(this);
-//        //xml = parser.getUrlContents(requestUrl);
-//
-//
-//        // Instantiate the RequestQueue.
-//        RequestQueue queue = Volley.newRequestQueue(this);
-//
-//// Request a string response from the provided URL.
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestUrl,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        //Handle Response
-////                        xml = response;
-////                        tw.setText(response);
-//
-//                        Document doc = parser.getDomElement(response);
-//                        //get the item tags content
-////                        System.out.println(getStringFromDoc(doc));
-//
-//                        NodeList itemNodeList = doc.getElementsByTagName(KEY_ITEM);
-//                        System.out.println("itemNodeListLength: "+itemNodeList.getLength());
-//                        //loop for item attributes
-//                        for (int i = 0; i < itemNodeList.getLength(); i++) {
-//                            HashMap<String, String> map = new HashMap<String, String>();
-//                            Element e = (Element) itemNodeList.item(i);
-//
-//
-////                            NodeList itemAttributeNodeList = doc.getElementsByTagName(KEY_ITEM_ATTRIBUTES);
-////                            System.out.println("itemAttributesNodeListLength: "+itemAttributeNodeList.getLength());
-//
-////                            for (int j = 0; j < itemNodeList.getLength(); j++) {
-////                                Element f = (Element) itemNodeList.item(i);
-////                                map.put(KEY_TITLE,parser.getValue(f,KEY_TITLE));
-////
-////                                for (int r = 0; r < itemNodeList.getLength(); r++) {
-////                                    Element g = (Element) itemNodeList.item(i);
-////                                    map.put(KEY_LIST_PRICE, parser.getValue(g, KEY_TITLE));
-////
-////                                    for (int k = 0; k < itemNodeList.getLength(); k++) {
-////                                        Element l = (Element) itemNodeList.item(i);
-////                                        map.put(KEY_LIST_PRICE, parser.getValue(l, KEY_LIST_PRICE));
-////                                    }
-////                                }
-////                            }
-////                            System.out.println("Nodename: "+itemNodeList.item(i).getNodeName());
-//                            map.put(KEY_ASIN,parser.getValue(e,KEY_ASIN));
-//                            map.put(KEY_TITLE,parser.getValue(e,KEY_TITLE));
-//                            map.put(KEY_FORMATTED_PRICE,parser.getValue(e,KEY_FORMATTED_PRICE));
-//
-//
-//                            //map.put("ParentASIN",parser.getValue(e,"ParentASIN"));
-//                            products.add(map);
-//                        }
-//
-//                        StringBuilder sb = new StringBuilder();
-//                        for (HashMap s : products)
-//                        {
-//                            sb.append(s.toString());
-//                            sb.append("\t");
-//                        }
-//                        tw.setText(sb.toString());
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                //Handle ERROR
-//                Log.d("RequestError", "Error while getting xml: " + error.networkResponse.toString());
-//            }
-//        });
-//// Add the request to the RequestQueue.
-//        queue.add(stringRequest);
-//    }
-//    public static String getStringFromDoc(Document doc) {
-//        try {
-//            StringWriter sw = new StringWriter();
-//            TransformerFactory tf = TransformerFactory.newInstance();
-//            Transformer transformer = tf.newTransformer();
-//            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-//            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-//            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-//            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-//
-//            transformer.transform(new DOMSource(doc), new StreamResult(sw));
-//            return sw.toString();
-//        } catch (Exception ex) {
-//            throw new RuntimeException("Error converting to String", ex);
-//        }
 
 

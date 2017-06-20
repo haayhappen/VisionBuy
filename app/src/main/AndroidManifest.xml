@@ -34,7 +34,8 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".MasterActivity"></activity>
+        <activity android:name=".MasterActivity" />
+        <activity android:name=".DetailActivity"></activity>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.google.sample.cloudvision;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -77,7 +80,8 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
         result.startAnimation(animation);
         lastPosition = position;
 
-        //Glide.with(con).load(url).placeholder(R.drawable.ic_image_black_24dp).into(myImageView);
+        Glide.with(con).load(url).placeholder(R.drawable.ic_image_black_24dp).error(R.drawable.ic_image_black_24dp).into(myImageView);
+
 
         AmazonParser.Item item = itemlist.get(position);
         holder.titletextview.setText(item.title);
@@ -96,6 +100,9 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
         Object object= getItem(position);
         AmazonParser.Item item=(AmazonParser.Item) object;
 
+        Intent i =new Intent(con,DetailActivity.class);
+        i.putExtra("item",item);
+        con.startActivity(i);
         //TODO INTENT TO DETAILVIEW
     }
 
