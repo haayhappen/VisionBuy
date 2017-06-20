@@ -1,5 +1,6 @@
 package com.google.sample.cloudvision;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -192,7 +193,6 @@ public class MasterActivity extends AppCompatActivity {
             populateListView(result);
 
 
-
 //
 //            String itemstring = "";
 //
@@ -223,7 +223,7 @@ public class MasterActivity extends AppCompatActivity {
 
         }
 
-        void populateListView(String xmlString){
+        void populateListView(String xmlString) {
 
             InputStream stream = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
             listview = (ListView) findViewById(R.id.listview);
@@ -236,10 +236,10 @@ public class MasterActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            ArrayList<Item> arrayListItems= new ArrayList<>();
+            ArrayList<Item> arrayListItems = new ArrayList<>();
             arrayListItems.addAll(items);
 
-            CustomArrayAdapter customArrayAdapter = new CustomArrayAdapter(MasterActivity.this,R.layout.list_row, arrayListItems);
+            CustomArrayAdapter customArrayAdapter = new CustomArrayAdapter(MasterActivity.this, R.layout.list_row, arrayListItems);
             listview.setAdapter(customArrayAdapter);
 
             final List<Item> finalItems = items;
@@ -252,6 +252,12 @@ public class MasterActivity extends AppCompatActivity {
                             "Item " + (position + 1) + ": " + finalItems.get(position),
                             Toast.LENGTH_SHORT);
                     toast.show();
+
+
+                    Item item = finalItems.get(position);
+                    Intent i = new Intent(getApplicationContext(), DetailActivity.class);
+                    i.putExtra("item", item);
+                    startActivity(i);
                 }
             });
         }

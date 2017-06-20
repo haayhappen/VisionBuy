@@ -22,7 +22,7 @@ import static android.R.id.list;
  * Created by Fynn on 18.06.2017.
  */
 
-public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickListener {
+public class CustomArrayAdapter extends ArrayAdapter /*implements View.OnClickListener */{
 
     //ViewHolder Pattern class
     private static class ViewHolder {
@@ -109,17 +109,17 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
 
     }
 
-    @Override
-    public void onClick(View view) {
-        int position = (Integer) view.getTag();
-        Object object = getItem(position);
-        Item item = (Item) object;
-
-        Intent i = new Intent(context, DetailActivity.class);
-        i.putExtra("item", item);
-        context.startActivity(i);
-        //TODO INTENT TO DETAILVIEW
-    }
+//    @Override
+//    public void onClick(View view) {
+//        int position = (Integer) view.getTag();
+//        Object object = getItem(position);
+//        Item item = (Item) object;
+//
+//        Intent i = new Intent(context, DetailActivity.class);
+//        i.putExtra("item", item);
+//        context.startActivity(i);
+//        //TODO INTENT TO DETAILVIEW
+//    }
 
 
 }
