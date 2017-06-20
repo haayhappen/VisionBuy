@@ -189,12 +189,12 @@ public class MasterActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            setContentView(R.layout.content_xml);
-            ListView lv = (ListView) findViewById(R.id.listview);
+            setContentView(R.layout.activity_master);
 
             InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
 
-            List<AmazonParser.Item> items = null;
+
+            List<Item> items = null;
             AmazonParser parser = new AmazonParser();
             try {
                 items = parser.parse(stream);
@@ -204,13 +204,17 @@ public class MasterActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            CustomArrayAdapter caa = new CustomArrayAdapter(MasterActivity.this, items);
-            lv.setAdapter(caa);
+            ArrayList<Item> arrayListItems= new ArrayList<Item>();
+            arrayListItems.addAll(items);
+
+            CustomArrayAdapter caa = new CustomArrayAdapter(MasterActivity.this, arrayListItems);
+            listview.setAdapter(caa);
+            caa.addAll(items);
 
             //TODO POPULATE LISTVIEW
             String itemstring = "";
 
-            for (AmazonParser.Item item : items) {
+            for (Item item : items) {
                 if (item.title == null) {
                     item.title = "No title available\n";
                     itemstring += item.title;
@@ -231,9 +235,9 @@ public class MasterActivity extends AppCompatActivity {
                 itemstring += "\n\n";
             }
             Toast.makeText(MasterActivity.this, "Items successfully parsed!", Toast.LENGTH_SHORT).show();
-            TextView xmlview;
-            xmlview = (TextView) findViewById(R.id.xmlview);
-            xmlview.setText(itemstring);
+//            TextView xmlview;
+//            xmlview = (TextView) findViewById(R.id.xmlview);
+//            xmlview.setText(itemstring);
 
 //            // Displays the HTML string in the UI via a WebView
 //            WebView myWebView = (WebView) findViewById(R.id.webview);

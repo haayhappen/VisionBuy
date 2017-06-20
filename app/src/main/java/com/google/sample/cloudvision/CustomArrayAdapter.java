@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,38 +22,58 @@ import java.util.List;
 
 public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickListener{
 
-    List<AmazonParser.Item> itemlist;
-    Context con;
-    List<String> urllist;
+    //ViewHolder Pattern class
+    private static class ViewHolder
+    {
+        //Represents ListRow components
+        TextView titletextview;
+        TextView brandtextview;
+        TextView pricetextview;
+        ImageView productimageview;
+    }
+
+    //Declarations---------------------------
+    //Items
+    List<Item> itemlist = new ArrayList<>();
+    //URIs
+    List<String> urllist = new ArrayList<>();
+    //MasterActivity context
+    Context context;
+    //LastView position
     private int lastPosition = -1;
+    //---------------------------------------
 
 
 
-    public CustomArrayAdapter(Context context, List<AmazonParser.Item> list){
-        super(context,0,list);
-        this.itemlist = list;
-        this.con = context;
+    public CustomArrayAdapter(Context context, ArrayList<Item> list){
+        super(context,R.layout.list_row,list);
+       // this.itemlist = list;
+        this.context = context;
 
-        for (AmazonParser.Item item : list){
-            urllist.add(item.imageURL);
+        //Get Urls from Products
+        for (Item Item : list){
+            urllist.add(Item.imageURL);
         }
     }
 
-    public AmazonParser.Item getItem(int position){
-        return itemlist.get(position);
-    }
+//    public AmazonParser.Item getItem(int position){
+//        return itemlist.get(position);
+//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+
         ViewHolder holder;
-        //AmazonParser.Item item = getItem(position);
+        //Item item = (Item)getItem(position);
         final ImageView myImageView;
         final View result;
 
-        LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) { //ConvertView can not be reused or doesn't exist
-            LayoutInflater inflator = null;
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+
             convertView = inflater.inflate(R.layout.list_row,parent,false);
             // inflate custom layout called list_row
             holder = new ViewHolder();
@@ -76,14 +97,14 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
 
         String url = urllist.get(position);
 
-        Animation animation = AnimationUtils.loadAnimation(con, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+        Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
         result.startAnimation(animation);
         lastPosition = position;
 
-        Glide.with(con).load(url).placeholder(R.drawable.ic_image_black_24dp).error(R.drawable.ic_image_black_24dp).into(myImageView);
+        Glide.with(context).load(url).placeholder(R.drawable.ic_image_black_24dp).error(R.drawable.ic_image_black_24dp).into(myImageView);
 
 
-        AmazonParser.Item item = itemlist.get(position);
+        Item item = itemlist.get(position);
         holder.titletextview.setText(item.title);
         holder.brandtextview.setText(item.brand);
         holder.pricetextview.setText(item.foramattedPrice);
@@ -98,21 +119,14 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
     public void onClick(View view) {
         int position=(Integer) view.getTag();
         Object object= getItem(position);
-        AmazonParser.Item item=(AmazonParser.Item) object;
+        Item item=(Item) object;
 
-        Intent i =new Intent(con,DetailActivity.class);
+        Intent i =new Intent(context,DetailActivity.class);
         i.putExtra("item",item);
-        con.startActivity(i);
+        context.startActivity(i);
         //TODO INTENT TO DETAILVIEW
     }
 
-    static class ViewHolder
-    {
 
-        TextView titletextview;
-        TextView brandtextview;
-        TextView pricetextview;
-        ImageView productimageview;
-    }
 }
 

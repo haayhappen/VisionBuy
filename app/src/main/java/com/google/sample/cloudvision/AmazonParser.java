@@ -19,21 +19,7 @@ import java.io.Serializable;
 
 public class AmazonParser {
 
-    public static class Item implements Serializable{
-        public String title;
-        public String brand;
-        public String foramattedPrice;
-        public String imageURL;
 
-        private Item(String title, String brand, String foramattedPrice, String imageURL) {
-            this.title = title;
-            this.brand = brand;
-            this.foramattedPrice = foramattedPrice;
-            this.imageURL = imageURL;
-        }
-
-
-    }
 
     private static final String ns = null;
 
