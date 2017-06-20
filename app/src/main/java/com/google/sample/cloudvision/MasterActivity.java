@@ -68,15 +68,15 @@ public class MasterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
 
-        listview = (ListView) findViewById(R.id.listview);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //TODO HANDLE ITEMCKLCIK
-                Toast.makeText(MasterActivity.this, "Item clicked, onItemClickListener in MasterActivity", Toast.LENGTH_LONG);
-            }
-        });
+//        listview = (ListView) findViewById(R.id.listview);
+//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                //TODO HANDLE ITEMCKLCIK
+//                Toast.makeText(MasterActivity.this, "Item clicked, onItemClickListener in MasterActivity", Toast.LENGTH_LONG);
+//            }
+//        });
 
         //gets the keywords from the MainActivity intent
         ArrayList<String> keywords = getIntent().getStringArrayListExtra("keys");
@@ -191,8 +191,44 @@ public class MasterActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             setContentView(R.layout.activity_master);
 
-            InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+            populateListView(result);
 
+
+
+//
+//            String itemstring = "";
+//
+//            for (Item item : items) {
+//                if (item.title == null) {
+//                    item.title = "No title available\n";
+//                    itemstring += item.title;
+//                } else itemstring += item.title + "\n";
+//                if (item.brand == null) {
+//                    item.brand = "No brand available\n";
+//                    itemstring += item.brand;
+//                } else itemstring += item.brand + "\n";
+//                if (item.foramattedPrice == null) {
+//                    item.foramattedPrice = "No price available\n";
+//                    itemstring += item.foramattedPrice;
+//                } else itemstring += item.foramattedPrice + "\n";
+//                if (item.imageURL == null) {
+//                    item.imageURL = "No Image Url available\n";
+//                    itemstring += item.imageURL;
+//                } else itemstring += item.imageURL + "\n";
+//
+//                itemstring += "\n\n";
+//            }
+            Toast.makeText(MasterActivity.this, "Items successfully parsed!", Toast.LENGTH_SHORT).show();
+//            TextView xmlview;
+//            xmlview = (TextView) findViewById(R.id.xmlview);
+//            xmlview.setText(itemstring);
+
+        }
+
+        public void populateListView(String xmlString){
+
+            InputStream stream = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
+            listview = (ListView) findViewById(R.id.listview);
 
             List<Item> items = null;
             AmazonParser parser = new AmazonParser();
@@ -207,41 +243,21 @@ public class MasterActivity extends AppCompatActivity {
             ArrayList<Item> arrayListItems= new ArrayList<Item>();
             arrayListItems.addAll(items);
 
-            CustomArrayAdapter caa = new CustomArrayAdapter(MasterActivity.this, arrayListItems);
-            listview.setAdapter(caa);
-            caa.addAll(items);
+            CustomArrayAdapter customArrayAdapter = new CustomArrayAdapter(MasterActivity.this,R.layout.list_row, arrayListItems);
+            listview.setAdapter(customArrayAdapter);
 
-            //TODO POPULATE LISTVIEW
-            String itemstring = "";
+            final List<Item> finalItems = items;
+            listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            for (Item item : items) {
-                if (item.title == null) {
-                    item.title = "No title available\n";
-                    itemstring += item.title;
-                } else itemstring += item.title + "\n";
-                if (item.brand == null) {
-                    item.brand = "No brand available\n";
-                    itemstring += item.brand;
-                } else itemstring += item.brand + "\n";
-                if (item.foramattedPrice == null) {
-                    item.foramattedPrice = "No price available\n";
-                    itemstring += item.foramattedPrice;
-                } else itemstring += item.foramattedPrice + "\n";
-                if (item.imageURL == null) {
-                    item.imageURL = "No Image Url available\n";
-                    itemstring += item.imageURL;
-                } else itemstring += item.imageURL + "\n";
-
-                itemstring += "\n\n";
-            }
-            Toast.makeText(MasterActivity.this, "Items successfully parsed!", Toast.LENGTH_SHORT).show();
-//            TextView xmlview;
-//            xmlview = (TextView) findViewById(R.id.xmlview);
-//            xmlview.setText(itemstring);
-
-//            // Displays the HTML string in the UI via a WebView
-//            WebView myWebView = (WebView) findViewById(R.id.webview);
-//            myWebView.loadData(result, "text/html", null);
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    //TODO HANDLE ITEMCKLCIK
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Item " + (position + 1) + ": " + finalItems.get(position),
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            });
         }
 
         /**

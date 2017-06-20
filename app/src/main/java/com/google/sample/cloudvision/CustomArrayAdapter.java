@@ -16,15 +16,16 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.id.list;
+
 /**
  * Created by Fynn on 18.06.2017.
  */
 
-public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickListener{
+public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickListener {
 
     //ViewHolder Pattern class
-    private static class ViewHolder
-    {
+    private static class ViewHolder {
         //Represents ListRow components
         TextView titletextview;
         TextView brandtextview;
@@ -44,14 +45,13 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
     //---------------------------------------
 
 
-
-    public CustomArrayAdapter(Context context, ArrayList<Item> list){
-        super(context,R.layout.list_row,list);
-       // this.itemlist = list;
+    public CustomArrayAdapter(Context context,int recourceId, ArrayList<Item> list) {
+        super(context, recourceId, list);
+        // this.itemlist = list;
         this.context = context;
 
         //Get Urls from Products
-        for (Item Item : list){
+        for (Item Item : list) {
             urllist.add(Item.imageURL);
         }
     }
@@ -63,51 +63,45 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-
-        ViewHolder holder;
-        //Item item = (Item)getItem(position);
-        final ImageView myImageView;
+        ViewHolder viewHolder = null;
+        Item item = (Item) getItem(position);
         final View result;
 
 //        LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) { //ConvertView can not be reused or doesn't exist
+            viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
+            convertView = inflater.inflate(R.layout.list_row, parent, false);
+            viewHolder.titletextview = (TextView) convertView.findViewById(R.id.titletextview);
+            viewHolder.brandtextview = (TextView) convertView.findViewById(R.id.brandtextview);
+            viewHolder.pricetextview = (TextView) convertView.findViewById(R.id.pricetextview);
+            viewHolder.productimageview = (ImageView) convertView.findViewById(R.id.list_imageview);
+            //myImageView = (ImageView) inflater.inflate(R.layout.list_row, parent, false);
 
-            convertView = inflater.inflate(R.layout.list_row,parent,false);
-            // inflate custom layout called list_row
-            holder = new ViewHolder();
-            holder.titletextview =(TextView) convertView.findViewById(R.id.titletextview);
-            holder.brandtextview =(TextView) convertView.findViewById(R.id.brandtextview);
-            holder.pricetextview =(TextView) convertView.findViewById(R.id.pricetextview);
-
-            //holder.productimageview = (ImageView) convertView.findViewById(R.id.list_imageview);
-            myImageView = (ImageView) inflater.inflate(R.layout.list_row, parent, false);
-
+            //ImageView fotoView = (ImageView) convertView.findViewById(R.id.list_imageview);
 
             result = convertView;
-            convertView.setTag(holder);
+            convertView.setTag(viewHolder);
         }//ConvertView can be reused -->
-        else
-        {
-            myImageView = (ImageView) convertView;
-            holder = (ViewHolder)convertView.getTag();
-            result=convertView;
+        else {
+            //myImageView = (ImageView) convertView;
+            viewHolder = (ViewHolder) convertView.getTag();
+            //result=convertView;
         }
 
         String url = urllist.get(position);
+        //Item item = itemlist.get(position);
 
-        Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-        result.startAnimation(animation);
-        lastPosition = position;
+//        Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+//        result.startAnimation(animation);
+//        lastPosition = position;
+        Glide.with(context).load(url).placeholder(R.drawable.ic_image_black_24dp).error(R.drawable.ic_image_black_24dp).into(viewHolder.productimageview);
 
-        Glide.with(context).load(url).placeholder(R.drawable.ic_image_black_24dp).error(R.drawable.ic_image_black_24dp).into(myImageView);
-
-
-        Item item = itemlist.get(position);
-        holder.titletextview.setText(item.title);
-        holder.brandtextview.setText(item.brand);
-        holder.pricetextview.setText(item.foramattedPrice);
+        viewHolder.titletextview.setText(item.title);
+        viewHolder.brandtextview.setText(item.brand);
+        viewHolder.pricetextview.setText(item.foramattedPrice);
+        //viewHolder.productimageview
         //holder.productimageview.set
         // set the name to the text;
 
@@ -117,12 +111,12 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        int position=(Integer) view.getTag();
-        Object object= getItem(position);
-        Item item=(Item) object;
+        int position = (Integer) view.getTag();
+        Object object = getItem(position);
+        Item item = (Item) object;
 
-        Intent i =new Intent(context,DetailActivity.class);
-        i.putExtra("item",item);
+        Intent i = new Intent(context, DetailActivity.class);
+        i.putExtra("item", item);
         context.startActivity(i);
         //TODO INTENT TO DETAILVIEW
     }
