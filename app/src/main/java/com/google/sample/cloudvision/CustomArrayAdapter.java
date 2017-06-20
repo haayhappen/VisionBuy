@@ -87,17 +87,17 @@ public class CustomArrayAdapter extends ArrayAdapter implements View.OnClickList
         else {
             //myImageView = (ImageView) convertView;
             viewHolder = (ViewHolder) convertView.getTag();
-            //result=convertView;
+            result=convertView;
         }
 
         String url = urllist.get(position);
         //Item item = itemlist.get(position);
 
-//        Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-//        result.startAnimation(animation);
-//        lastPosition = position;
-        Glide.with(context).load(url).placeholder(R.drawable.ic_image_black_24dp).error(R.drawable.ic_image_black_24dp).into(viewHolder.productimageview);
-
+        Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+        result.startAnimation(animation);
+        lastPosition = position;
+        Glide.with(context).load(url).into(viewHolder.productimageview);
+//.placeholder(R.drawable.ic_image_black_24dp)
         viewHolder.titletextview.setText(item.title);
         viewHolder.brandtextview.setText(item.brand);
         viewHolder.pricetextview.setText(item.foramattedPrice);

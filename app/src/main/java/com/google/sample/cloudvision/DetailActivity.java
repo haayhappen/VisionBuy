@@ -12,7 +12,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         Intent i = getIntent();
-        AmazonParser.Item item = (AmazonParser.Item)i.getSerializableExtra("item");
+        Item item = (Item)i.getSerializableExtra("item");
 
         //TODO FILL LAYOUT WITH ITEM PROPERTIES
     }

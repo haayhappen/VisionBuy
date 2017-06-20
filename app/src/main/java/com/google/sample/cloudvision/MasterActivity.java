@@ -33,32 +33,32 @@ public class MasterActivity extends AppCompatActivity {
 
     private static final String ENDPOINT = "webservices.amazon.de";
     ListView listview;
-    String xml;
 
-    //parent
-    static final String KEY_ITEM = "Item";
-    //inside item
-    static final String KEY_ITEM_ATTRIBUTES = "ItemAttributes";
-    //inside itemattributes
-    static final String KEY_LIST_PRICE = "ListPrice";
-    //inside listprice
-    static final String KEY_FORMATTED_PRICE = "FormattedPrice";
-    //inside itemattriubtes
-    static final String KEY_TITLE = "Title";
+//    //parent
+//    static final String KEY_ITEM = "Item";
+//    //inside item
+//    static final String KEY_ITEM_ATTRIBUTES = "ItemAttributes";
+//    //inside itemattributes
+//    static final String KEY_LIST_PRICE = "ListPrice";
+//    //inside listprice
+//    static final String KEY_FORMATTED_PRICE = "FormattedPrice";
+//    //inside itemattriubtes
+//    static final String KEY_TITLE = "Title";
+//
+//    //inside item
+//    static final String KEY_SMALL_IMAGE = "SmallImage";
+//    //inside smallimage
+//    static final String KEY_URL = "Url";
+//
+//    //inside item
+//    static final String KEY_ASIN = "ASIN";
 
-    //inside item
-    static final String KEY_SMALL_IMAGE = "SmallImage";
-    //inside smallimage
-    static final String KEY_URL = "Url";
 
-    //inside item
-    static final String KEY_ASIN = "ASIN";
-
-
-    ArrayList<HashMap<String, String>> products = new ArrayList<HashMap<String, String>>();
-
-    public TextView tw;
-    public Parser parser;
+    //ArrayList<HashMap<String, String>> products = new ArrayList<HashMap<String, String>>();
+//    ArrayList<HashMap<String, String>> products = new ArrayList<>();
+//
+//    public TextView tw;
+//    public Parser parser;
     public String requestUrl = null;
     public SignedRequestsHelper helper;
 
@@ -80,14 +80,6 @@ public class MasterActivity extends AppCompatActivity {
 
         //gets the keywords from the MainActivity intent
         ArrayList<String> keywords = getIntent().getStringArrayListExtra("keys");
-
-        try {
-            //get the SignedRequestHelper instance with Endpoint and specified credentials
-            helper = SignedRequestsHelper.getInstance(ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
         //build a keyword search string
         if (keywords != null) {
             StringBuilder sb = new StringBuilder();
@@ -96,8 +88,16 @@ public class MasterActivity extends AppCompatActivity {
                 sb.append("\t");
             }
         }
+        //get the SignedRequestHelper instance with Endpoint and specified credentials
+        try {
+            helper = SignedRequestsHelper.getInstance(ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
         //build Hashmap for QueryParams
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
 
         params.put("Service", "AWSECommerceService");
         params.put("Operation", "ItemSearch");
@@ -166,8 +166,6 @@ public class MasterActivity extends AppCompatActivity {
                     // Converts Stream to String with max length of 500.
                     result = readStream(stream, 1000000);
                 }
-            } catch (ProtocolException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -225,7 +223,7 @@ public class MasterActivity extends AppCompatActivity {
 
         }
 
-        public void populateListView(String xmlString){
+        void populateListView(String xmlString){
 
             InputStream stream = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
             listview = (ListView) findViewById(R.id.listview);
@@ -234,13 +232,11 @@ public class MasterActivity extends AppCompatActivity {
             AmazonParser parser = new AmazonParser();
             try {
                 items = parser.parse(stream);
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (XmlPullParserException | IOException e) {
                 e.printStackTrace();
             }
 
-            ArrayList<Item> arrayListItems= new ArrayList<Item>();
+            ArrayList<Item> arrayListItems= new ArrayList<>();
             arrayListItems.addAll(items);
 
             CustomArrayAdapter customArrayAdapter = new CustomArrayAdapter(MasterActivity.this,R.layout.list_row, arrayListItems);
