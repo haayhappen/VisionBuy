@@ -61,6 +61,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        con =this;
+        con = this;
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                    startCamera();
+                                startCamera();
 
 
                             }
@@ -137,7 +138,8 @@ public class MainActivity extends AppCompatActivity {
                     GALLERY_IMAGE_REQUEST);
         }
     }
-//throws only for testing AMAZON API
+
+    //throws only for testing AMAZON API
     public void startCamera() {
 
         if (PermissionUtils.requestPermission(
@@ -178,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             case CAMERA_PERMISSIONS_REQUEST:
                 if (PermissionUtils.permissionGranted(requestCode, CAMERA_PERMISSIONS_REQUEST, grantResults)) {
 
-                        startCamera();
+                    startCamera();
 
                 }
                 break;
@@ -198,9 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //TODO ONLY FOR TESTING
                 callCloudVision(bitmap);
-                //Intent intent = new Intent(this, MasterActivity.class);
-//                intent.putStringArrayListExtra("keys", (ArrayList<String>) keywords);
-                //startActivity(intent);
+
                 mMainImage.setImageBitmap(bitmap);
 
             } catch (IOException e) {
@@ -236,7 +236,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected String doInBackground(Object... params) {
                 try {
-
 
 
                     HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
@@ -276,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                             // Convert the bitmap to a JPEG
                             // Just in case it's a format that Android understands but Cloud Vision
                             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                             byte[] imageBytes = byteArrayOutputStream.toByteArray();
 
                             // Base64 encode the JPEG
@@ -297,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                                 webDetection.setMaxResults(10);
                                 add(webDetection);
                                 Feature logoDetection = new Feature();
-                                logoDetection.setType("");
+                                logoDetection.setType("LOGO_DETECTION");
                                 logoDetection.setMaxResults(5);
                                 add(logoDetection);
                             }});
@@ -326,7 +325,12 @@ public class MainActivity extends AppCompatActivity {
 
             protected void onPostExecute(String result) {
                 dialog.dismiss();
-                mImageDetails.setText(result);
+                // mImageDetails.setText(result);
+
+                List<String> keywords = new ArrayList<String>(Arrays.asList(result.split(" ")));
+                Intent intent = new Intent(MainActivity.this, MasterActivity.class);
+                intent.putStringArrayListExtra("keys", (ArrayList<String>) keywords);
+                startActivity(intent);
                 //TODO Call Amazon api here with keywords
             }
         }.execute();
@@ -355,19 +359,25 @@ public class MainActivity extends AppCompatActivity {
     private String convertResponseToString(BatchAnnotateImagesResponse response) {
         String logo = "";
         String logoMessage = "";
-        Float logoConfidence = 0f;
+        //Float logoConfidence = 0f;
         Float logoScore = 0f;
         String message = "I found these things:\n\n";
         List<String> keywords = new ArrayList<String>();
+        List<String> possibleSearchEntries = new ArrayList<>();
+        List<Float> possibleSearchEntryScores = new ArrayList<>();
 
-         EntityAnnotation logoAnnotation = response.getResponses().get(0).getLogoAnnotations().get(0);
-        if (logoAnnotation != null || !logoAnnotation.getDescription().equals("")){
-            //Logo is valid
-            logo = logoAnnotation.getDescription();
-            logoConfidence = logoAnnotation.getConfidence();
-            logoScore = logoAnnotation.getScore();
-            logoMessage = "Found Logo of: "+logo+" with confidence of: "+logoConfidence.toString()+" and score of: "+logoScore.toString()+"\n\n";
+        List<EntityAnnotation> logoAnnotationList = response.getResponses().get(0).getLogoAnnotations();
+        if (logoAnnotationList != null) {
+            EntityAnnotation logoAnnotation = logoAnnotationList.get(0);
+            if (logoAnnotation != null || !logoAnnotation.getDescription().equals("")) {
+                //Logo is valid
+                logo = logoAnnotation.getDescription();
+                //logoConfidence = logoAnnotation.getConfidence();
+                logoScore = logoAnnotation.getScore();
+                logoMessage = "Found Logo of: " + logo + " with score of: " + logoScore.toString() + "\n\n";
+            }
         }
+
 
         //logoMessage returns logo details
 
@@ -433,7 +443,8 @@ public class MainActivity extends AppCompatActivity {
             for (WebEntity entity : webEntities) {
                 message += String.format(Locale.US, "%.3f: %s", entity.getScore(), entity.getDescription());
                 message += "\n";
-                keywords.add(entity.getDescription());
+                possibleSearchEntries.add(entity.getDescription());
+                possibleSearchEntryScores.add(entity.getScore());
             }
             message += "\n\n\n";
         } else {
@@ -452,15 +463,21 @@ public class MainActivity extends AppCompatActivity {
         }
 */
 
-        if(keywords.size() >5){
-            keywords.subList(5,keywords.size()).clear();
+        //Adding the first web entity plus second if score is over 0.7
+        if (possibleSearchEntries.size() >= 3) {
+            //keywords.subList(5, keywords.size()).clear();
+            keywords.add(possibleSearchEntries.get(0));
+            if (possibleSearchEntryScores.get(1) > 0.700f)
+                keywords.add(possibleSearchEntries.get(1));
+            //if (possibleSearchEntryScores.get(2) > 0.700f)
+              //  keywords.add(possibleSearchEntries.get(2));
         }
 
-        Intent intent = new Intent(this, MasterActivity.class);
-        intent.putStringArrayListExtra("keys", (ArrayList<String>) keywords);
-        startActivity(intent);
+        //Intent intent = new Intent(this, MasterActivity.class);
+        //intent.putStringArrayListExtra("keys", (ArrayList<String>) keywords);
+        //startActivity(intent);
 
-        //return /*message + */keywords.toString();
-        return logoMessage+message;
+        return keywords.toString();
+        //return logoMessage + message;
     }
 }

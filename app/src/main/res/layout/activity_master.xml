@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="xmlButtonClicked"
-        android:text="Download XML" />
+        android:text="Download XML"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/listview"

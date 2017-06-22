@@ -7,8 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -18,12 +19,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MasterActivity extends AppCompatActivity {
@@ -32,9 +33,13 @@ public class MasterActivity extends AppCompatActivity {
 
     private static final String AWS_SECRET_KEY = "QuRbYHla0ohsRUMzYI88UAYB+g4IrwYdjwReoxQ0";
 
-    private static final String ENDPOINT = "webservices.amazon.de";
+    private static final String ENDPOINT_DE = "webservices.amazon.de";
+    private static final String ENDPOINT_US = "webservices.amazon.com";
+
     ListView listview;
 
+    private static final String ASSOCIATE_ID_DE = "visi05-21";
+    private static final String ASSOCIATE_ID_US = "visionbuy-20";
 //    //parent
 //    static final String KEY_ITEM = "Item";
 //    //inside item
@@ -62,6 +67,10 @@ public class MasterActivity extends AppCompatActivity {
 //    public Parser parser;
     public String requestUrl = null;
     public SignedRequestsHelper helper;
+    private String currentLocaleAssociateKey = "";
+    private String currentEndpoint ="";
+    MaterialDialog.Builder builder;
+    MaterialDialog dialog;
 
 
     @Override
@@ -69,33 +78,37 @@ public class MasterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
 
-//        listview = (ListView) findViewById(R.id.listview);
-//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                //TODO HANDLE ITEMCKLCIK
-//                Toast.makeText(MasterActivity.this, "Item clicked, onItemClickListener in MasterActivity", Toast.LENGTH_LONG);
-//            }
-//        });
-
         //gets the keywords from the MainActivity intent
         ArrayList<String> keywords = getIntent().getStringArrayListExtra("keys");
         //build a keyword search string
+        StringBuilder sb = new StringBuilder();
         if (keywords != null) {
-            StringBuilder sb = new StringBuilder();
+
             for (String s : keywords) {
                 sb.append(s);
-                sb.append("\t");
+                sb.append(" ");
             }
+        }
+
+        //Setting up Language settings
+        String loc = Locale.getDefault().getISO3Language();
+        if (Locale.getDefault().getISO3Language().equals("deu")){
+            currentLocaleAssociateKey = ASSOCIATE_ID_DE;
+            currentEndpoint = ENDPOINT_DE;
+        }else{
+            currentLocaleAssociateKey = ASSOCIATE_ID_US;
+            currentEndpoint = ENDPOINT_US;
         }
         //get the SignedRequestHelper instance with Endpoint and specified credentials
         try {
-            helper = SignedRequestsHelper.getInstance(ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY);
+            helper = SignedRequestsHelper.getInstance(currentEndpoint, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY);
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
+
+
+
 
         //build Hashmap for QueryParams
         Map<String, String> params = new HashMap<>();
@@ -103,16 +116,15 @@ public class MasterActivity extends AppCompatActivity {
         params.put("Service", "AWSECommerceService");
         params.put("Operation", "ItemSearch");
         params.put("AWSAccessKeyId", "AKIAIOGZ47QZFXV2OYIA");
-        params.put("AssociateTag", "visi05-21");
+        params.put("AssociateTag", currentLocaleAssociateKey);
         params.put("SearchIndex", "All");
         params.put("ContentType", "text/xml");
-        //TODO REMOVE HARDCODED KEYWORDs
-        params.put("Keywords", "iphone");
+        params.put("Keywords", sb.toString());
         params.put("ResponseGroup", "Images,ItemAttributes,Offers");
 
         //sign the url with params
         requestUrl = helper.sign(params);
-
+        loadPage(requestUrl);
         //TODO REMOVE FOR PRODUCTION
         System.out.println("RequestUrl: " + requestUrl);
     }
@@ -128,6 +140,20 @@ public class MasterActivity extends AppCompatActivity {
 
     // Implementation of AsyncTask used to download XML products from amazon
     private class DownloadXmlTask extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected void onPreExecute() {
+            builder = new MaterialDialog.Builder(MasterActivity.this)
+                    .title("Searching for products")
+                    .content("This should only take a few seconds, depending on your internet connection")
+                    .progress(true, 0)
+                    .cancelable(false);
+
+            dialog = builder.build();
+            dialog.show();
+        }
+
         @Override
         protected String doInBackground(String... urls) {
 
@@ -189,8 +215,9 @@ public class MasterActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             setContentView(R.layout.activity_master);
-
             populateListView(result);
+            dialog.dismiss();
+
 
 
 //
