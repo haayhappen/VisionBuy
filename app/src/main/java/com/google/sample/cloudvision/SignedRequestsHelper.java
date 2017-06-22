@@ -151,7 +151,7 @@ public class SignedRequestsHelper {
         System.out.println("sig: "+sig);
         // construct the URL
         String url = 
-            "http://" + this.endpoint + REQUEST_URI + "?" + canonicalQS + "&Signature=" + sig/*.replaceAll("%0D%0A", "")*/;
+            "http://" + this.endpoint + REQUEST_URI + "?" + canonicalQS + "&Signature=" + sig;
 
         return url;
     }

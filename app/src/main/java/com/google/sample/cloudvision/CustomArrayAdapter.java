@@ -47,7 +47,6 @@ public class CustomArrayAdapter extends ArrayAdapter /*implements View.OnClickLi
 
     public CustomArrayAdapter(Context context,int recourceId, ArrayList<Item> list) {
         super(context, recourceId, list);
-        // this.itemlist = list;
         this.context = context;
 
         //Get Urls from Products
@@ -56,18 +55,12 @@ public class CustomArrayAdapter extends ArrayAdapter /*implements View.OnClickLi
         }
     }
 
-//    public AmazonParser.Item getItem(int position){
-//        return itemlist.get(position);
-//    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ViewHolder viewHolder = null;
         Item item = (Item) getItem(position);
         final View result;
-
-//        LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) { //ConvertView can not be reused or doesn't exist
             viewHolder = new ViewHolder();
@@ -77,50 +70,25 @@ public class CustomArrayAdapter extends ArrayAdapter /*implements View.OnClickLi
             viewHolder.brandtextview = (TextView) convertView.findViewById(R.id.brandtextview);
             viewHolder.pricetextview = (TextView) convertView.findViewById(R.id.pricetextview);
             viewHolder.productimageview = (ImageView) convertView.findViewById(R.id.list_imageview);
-            //myImageView = (ImageView) inflater.inflate(R.layout.list_row, parent, false);
-
-            //ImageView fotoView = (ImageView) convertView.findViewById(R.id.list_imageview);
 
             result = convertView;
             convertView.setTag(viewHolder);
         }//ConvertView can be reused -->
         else {
-            //myImageView = (ImageView) convertView;
             viewHolder = (ViewHolder) convertView.getTag();
             result=convertView;
         }
 
         String url = urllist.get(position);
-        //Item item = itemlist.get(position);
 
         Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
         result.startAnimation(animation);
         lastPosition = position;
-        Glide.with(context).load(url).into(viewHolder.productimageview);
-//.placeholder(R.drawable.ic_image_black_24dp)
+        Glide.with(context).load(url).placeholder(R.drawable.ic_image_black_24dp).into(viewHolder.productimageview);
         viewHolder.titletextview.setText(item.title);
         viewHolder.brandtextview.setText(item.brand);
         viewHolder.pricetextview.setText(item.foramattedPrice);
-        //viewHolder.productimageview
-        //holder.productimageview.set
-        // set the name to the text;
-
         return convertView;
-
     }
-
-//    @Override
-//    public void onClick(View view) {
-//        int position = (Integer) view.getTag();
-//        Object object = getItem(position);
-//        Item item = (Item) object;
-//
-//        Intent i = new Intent(context, DetailActivity.class);
-//        i.putExtra("item", item);
-//        context.startActivity(i);
-//        //TODO INTENT TO DETAILVIEW
-//    }
-
-
 }
 
