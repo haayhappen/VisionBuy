@@ -50,6 +50,7 @@ import com.google.api.services.vision.v1.VisionRequestInitializer;
 import com.google.api.services.vision.v1.model.AnnotateImageRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
+import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.WebEntity;
@@ -59,9 +60,6 @@ import com.google.api.services.vision.v1.model.WebPage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -199,10 +197,10 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap bitmap = scaleBitmapDown(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), 1200);
 
                 //TODO ONLY FOR TESTING
-                //callCloudVision(bitmap);
-                Intent intent = new Intent(this, MasterActivity.class);
+                callCloudVision(bitmap);
+                //Intent intent = new Intent(this, MasterActivity.class);
 //                intent.putStringArrayListExtra("keys", (ArrayList<String>) keywords);
-                startActivity(intent);
+                //startActivity(intent);
                 mMainImage.setImageBitmap(bitmap);
 
             } catch (IOException e) {
@@ -224,9 +222,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 builder = new MaterialDialog.Builder(con)
-                        .title("Searching")
-                        .content("Searching for products!")
-                        .progress(true, 0);
+                        .title("Searching for products")
+                        .content("This should only take a few seconds, depending on your internet connection")
+                        .progress(true, 0)
+                        .cancelable(false);
 
                 dialog = builder.build();
                 dialog.show();
@@ -297,6 +296,10 @@ public class MainActivity extends AppCompatActivity {
                                 webDetection.setType("WEB_DETECTION");
                                 webDetection.setMaxResults(10);
                                 add(webDetection);
+                                Feature logoDetection = new Feature();
+                                logoDetection.setType("");
+                                logoDetection.setMaxResults(5);
+                                add(logoDetection);
                             }});
 
                             // Add the list of one thing to the request
@@ -304,8 +307,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    Vision.Images.Annotate annotateRequest =
-                            vision.images().annotate(batchAnnotateImagesRequest);
+                    Vision.Images.Annotate annotateRequest = vision.images().annotate(batchAnnotateImagesRequest);
                     // Due to a bug: requests to Vision API containing large images fail when GZipped.
                     annotateRequest.setDisableGZipContent(true);
                     Log.d(TAG, "created Cloud Vision request object, sending request");
@@ -324,8 +326,8 @@ public class MainActivity extends AppCompatActivity {
 
             protected void onPostExecute(String result) {
                 dialog.dismiss();
-
                 mImageDetails.setText(result);
+                //TODO Call Amazon api here with keywords
             }
         }.execute();
     }
@@ -351,8 +353,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String convertResponseToString(BatchAnnotateImagesResponse response) {
+        String logo = "";
+        String logoMessage = "";
+        Float logoConfidence = 0f;
+        Float logoScore = 0f;
         String message = "I found these things:\n\n";
         List<String> keywords = new ArrayList<String>();
+
+         EntityAnnotation logoAnnotation = response.getResponses().get(0).getLogoAnnotations().get(0);
+        if (logoAnnotation != null || !logoAnnotation.getDescription().equals("")){
+            //Logo is valid
+            logo = logoAnnotation.getDescription();
+            logoConfidence = logoAnnotation.getConfidence();
+            logoScore = logoAnnotation.getScore();
+            logoMessage = "Found Logo of: "+logo+" with confidence of: "+logoConfidence.toString()+" and score of: "+logoScore.toString()+"\n\n";
+        }
+
+        //logoMessage returns logo details
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
         /**
@@ -366,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 message += String.format(Locale.US, "%.3f: %s", page.getScore(), page.getUrl());
                 message += "\n";
             }
-            message += "\n\n\n";
+            message += "\n\n";
         } else {
             message += "NO Pages with matching images!\n\n\n";
         }
@@ -385,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
             }
             message += "\n\n\n";
         } else {
-            message += "N Pages with partially matching images!\n\n\n";
+            message += "No Pages with partially matching images!\n\n\n";
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -442,6 +460,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putStringArrayListExtra("keys", (ArrayList<String>) keywords);
         startActivity(intent);
 
-        return /*message + */keywords.toString();
+        //return /*message + */keywords.toString();
+        return logoMessage+message;
     }
 }
