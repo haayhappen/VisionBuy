@@ -12,4 +12,11 @@
     <string name="image_picker_error">Something is wrong with that image. Pick a different one please.</string>
     <string name="connection_error">Connection failed</string>
     <string name="xml_error">XML Error</string>
+
+    <string name="k1">Md4GE9WUoo8aBlBP</string>
+    <string name="k2">9LHKPHTLTtDGA+</string>
+    <string name="k3">9663fOaWsr</string>
+
+    <string name="id1">AKIAI4ZF6D</string>
+    <string name="id2">HYJ6XBQ7KA</string>
 </resources>

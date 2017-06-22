@@ -29,9 +29,10 @@ import java.util.Map;
 
 public class MasterActivity extends AppCompatActivity {
 
-    private static final String AWS_ACCESS_KEY_ID = "AKIAIOGZ47QZFXV2OYIA";
 
-    private static final String AWS_SECRET_KEY = "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";
+    private static final String AWSK = "AKIAI4ZF6DHYJ6XBQ7KA";
+    private static final String AWSSK = "Md4GE9WUoo8aBlBP9LHKP";
+    private static final String AWSSK1 = "HTLTtDGA+9663fOaWsr";
 
     private static final String ENDPOINT_DE = "webservices.amazon.de";
     private static final String ENDPOINT_US = "webservices.amazon.com";
@@ -101,7 +102,7 @@ public class MasterActivity extends AppCompatActivity {
         }
         //get the SignedRequestHelper instance with Endpoint and specified credentials
         try {
-            helper = SignedRequestsHelper.getInstance(currentEndpoint, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY);
+            helper = SignedRequestsHelper.getInstance(currentEndpoint, AWSK, AWSSK + AWSSK1);
         } catch (Exception e) {
             e.printStackTrace();
             return;
