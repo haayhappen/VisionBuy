@@ -98,7 +98,7 @@ public class MasterActivity extends AppCompatActivity {
         keywordstw.setText("Searching for Product with Keywords: "+sb.toString());
 
         //Setting up Language settings
-        String loc = Locale.getDefault().getISO3Language();
+        //String loc = Locale.getDefault().getISO3Language();
         if (Locale.getDefault().getISO3Language().equals("deu")){
             currentLocaleAssociateKey = ASSOCIATE_ID_DE;
             currentEndpoint = ENDPOINT_DE;
@@ -221,7 +221,7 @@ public class MasterActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            setContentView(R.layout.activity_master);
+            //setContentView(R.layout.activity_master);
             populateListView(result);
             dialog.dismiss();
 

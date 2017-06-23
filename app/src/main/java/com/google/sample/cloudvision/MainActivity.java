@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                 //TODO ONLY FOR TESTING
                 callCloudVision(bitmap);
 
-                mMainImage.setImageBitmap(bitmap);
+                //mMainImage.setImageBitmap(bitmap);
 
             } catch (IOException e) {
                 Log.d(TAG, "Image picking failed because " + e.getMessage());
@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void callCloudVision(final Bitmap bitmap) throws IOException {
         // Switch text to loading
-        mImageDetails.setText(R.string.loading_message);
+        //mImageDetails.setText(R.string.loading_message);
 
         // Do the real work in an async task, because we need to use the network anyway
         new AsyncTask<Object, Void, String>() {
