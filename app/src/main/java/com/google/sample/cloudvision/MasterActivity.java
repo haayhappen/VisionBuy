@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -72,12 +73,15 @@ public class MasterActivity extends AppCompatActivity {
     private String currentEndpoint ="";
     MaterialDialog.Builder builder;
     MaterialDialog dialog;
+    TextView keywordstw;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
+
+        keywordstw = (TextView) findViewById(R.id.keywordtextview);
 
         //gets the keywords from the MainActivity intent
         ArrayList<String> keywords = getIntent().getStringArrayListExtra("keys");
@@ -90,6 +94,8 @@ public class MasterActivity extends AppCompatActivity {
                 sb.append(" ");
             }
         }
+
+        keywordstw.setText("Searching for Product with Keywords: "+sb.toString());
 
         //Setting up Language settings
         String loc = Locale.getDefault().getISO3Language();
