@@ -69,8 +69,6 @@ public class MasterActivity extends AppCompatActivity {
 //    public Parser parser;
     public String requestUrl = null;
     public SignedRequestsHelper helper;
-    private String currentLocaleAssociateKey = "";
-    private String currentEndpoint ="";
     MaterialDialog.Builder builder;
     MaterialDialog dialog;
     TextView keywordstw;
@@ -99,6 +97,8 @@ public class MasterActivity extends AppCompatActivity {
 
         //Setting up Language settings
         //String loc = Locale.getDefault().getISO3Language();
+        String currentLocaleAssociateKey = "";
+        String currentEndpoint = "";
         if (Locale.getDefault().getISO3Language().equals("deu")){
             currentLocaleAssociateKey = ASSOCIATE_ID_DE;
             currentEndpoint = ENDPOINT_DE;
@@ -122,7 +122,7 @@ public class MasterActivity extends AppCompatActivity {
 
         params.put("Service", "AWSECommerceService");
         params.put("Operation", "ItemSearch");
-        params.put("AWSAccessKeyId", "AKIAIOGZ47QZFXV2OYIA");
+        params.put("AWSAccessKeyId", "AKIAI4ZF6DHYJ6XBQ7KA");
         params.put("AssociateTag", currentLocaleAssociateKey);
         params.put("SearchIndex", "All");
         params.put("ContentType", "text/xml");
@@ -153,7 +153,7 @@ public class MasterActivity extends AppCompatActivity {
         protected void onPreExecute() {
             builder = new MaterialDialog.Builder(MasterActivity.this)
                     .title("Searching for products")
-                    .content("This should only take a few seconds, depending on your internet connection")
+                    .content(R.string.searchProductDelay)
                     .progress(true, 0)
                     .cancelable(false);
 
@@ -271,7 +271,9 @@ public class MasterActivity extends AppCompatActivity {
             }
 
             ArrayList<Item> arrayListItems = new ArrayList<>();
-            arrayListItems.addAll(items);
+            if (items != null) {
+                arrayListItems.addAll(items);
+            }
 
             CustomArrayAdapter customArrayAdapter = new CustomArrayAdapter(MasterActivity.this, R.layout.list_row, arrayListItems);
             listview.setAdapter(customArrayAdapter);
