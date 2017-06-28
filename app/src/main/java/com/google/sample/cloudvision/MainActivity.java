@@ -36,7 +36,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -64,7 +63,6 @@ import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.WebEntity;
-import com.google.api.services.vision.v1.model.WebImage;
 import com.google.api.services.vision.v1.model.WebPage;
 
 import java.io.ByteArrayOutputStream;
@@ -560,7 +558,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          * Partial matching images from the Internet. Those images are similar enough to share some key-
          * point features. For example an original image will likely have partial matching for its crops.
-         * The value may be {@code null}. */
+         * The value may be {@code null}.
         List<WebImage> partialMatchingImages = response.getResponses().get(0).getWebDetection().getPartialMatchingImages();
         if (partialMatchingImages != null) {
             message += "Pages with partial matching images: \n\n\n";
@@ -572,12 +570,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             message += "No Pages with partially matching images!\n\n\n";
         }
-
+*/
         ///////////////////////////////////////////////////////////////////////////////////////
         /**
          * The visually similar image results.
          * The value may be {@code null}.
-         */
+
         List<WebImage> visuallySimilarImages = response.getResponses().get(0).getWebDetection().getVisuallySimilarImages();
         if (visuallySimilarImages != null) {
             message += "Pages with similar images: \n\n\n";
@@ -588,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
             message += "\n\n\n";
         } else {
             message += "No Pages with similar images!\n\n\n";
-        }
+        }*/
         ///////////////////////////////////////////////////////////////////////////////////////
         /**
          * Deduced entities from similar images on the Internet.

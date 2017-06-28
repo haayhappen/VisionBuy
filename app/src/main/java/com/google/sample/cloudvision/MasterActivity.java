@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 
 public class MasterActivity extends AppCompatActivity {
 
@@ -72,6 +74,7 @@ public class MasterActivity extends AppCompatActivity {
     MaterialDialog.Builder builder;
     MaterialDialog dialog;
     TextView keywordstw;
+    WebView webView;
 
 
     @Override
@@ -125,7 +128,9 @@ public class MasterActivity extends AppCompatActivity {
         params.put("AWSAccessKeyId", "AKIAI4ZF6DHYJ6XBQ7KA");
         params.put("AssociateTag", currentLocaleAssociateKey);
         params.put("SearchIndex", "All");
-        params.put("ContentType", "text/xml");
+        //TODO REMOVE FOR PRODUCTION
+        params.put("ContentType", "text/html");
+        //params.put("ContentType", "text/xml");
         params.put("Keywords", sb.toString());
         params.put("ResponseGroup", "Images,ItemAttributes,Offers");
 
@@ -195,11 +200,18 @@ public class MasterActivity extends AppCompatActivity {
                 }
                 // Retrieve the response body as an InputStream.
                 stream = connection.getInputStream();
-                //publishProgress(DownloadCallback.Progress.GET_INPUT_STREAM_SUCCESS, 0);
                 if (stream != null) {
-                    // Converts Stream to String with max length of 500.
-                    result = readStream(stream, 1000000);
+                     //Converts Stream to String with max length of 500.
+                   result = readStream(stream, 1000000);
                 }
+                //BufferedReader r = new BufferedReader(new InputStreamReader(stream));
+                //StringBuilder total = new StringBuilder();
+                //String line;
+                //while ((line = r.readLine()) != null) {
+                 //   total.append(line).append('\n');
+                //}
+                //result = total.toString();
+
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -216,7 +228,7 @@ public class MasterActivity extends AppCompatActivity {
                 }
             }
 
-            return result;
+             return result;
         }
 
         @Override
@@ -225,36 +237,12 @@ public class MasterActivity extends AppCompatActivity {
             populateListView(result);
             dialog.dismiss();
 
-
-
-//
-//            String itemstring = "";
-//
-//            for (Item item : items) {
-//                if (item.title == null) {
-//                    item.title = "No title available\n";
-//                    itemstring += item.title;
-//                } else itemstring += item.title + "\n";
-//                if (item.brand == null) {
-//                    item.brand = "No brand available\n";
-//                    itemstring += item.brand;
-//                } else itemstring += item.brand + "\n";
-//                if (item.foramattedPrice == null) {
-//                    item.foramattedPrice = "No price available\n";
-//                    itemstring += item.foramattedPrice;
-//                } else itemstring += item.foramattedPrice + "\n";
-//                if (item.imageURL == null) {
-//                    item.imageURL = "No Image Url available\n";
-//                    itemstring += item.imageURL;
-//                } else itemstring += item.imageURL + "\n";
-//
-//                itemstring += "\n\n";
-//            }
             Toast.makeText(MasterActivity.this, "Items successfully parsed!", Toast.LENGTH_SHORT).show();
 //            TextView xmlview;
 //            xmlview = (TextView) findViewById(R.id.xmlview);
 //            xmlview.setText(itemstring);
-
+            //webView = (WebView) findViewById(R.id.webview);
+            //webView.loadData(result, "text/html", null);
         }
 
         void populateListView(String xmlString) {
